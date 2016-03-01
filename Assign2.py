@@ -184,6 +184,63 @@ def HPRI(nodeList, numNodes, source, destination):
         
     return transmissionCount;
 
+def HPRII(nodeList, numNodes, source, destination):
+    pathArray = [];
+    transmissionCount = 0;
+    run = 1;
+    pathArray.append(int(source));
+    previousNode = int(source);
+    noAdd = 0;
+    currentNode = int(source);
+    nextJump = random.randint(0, len(nodeList[int(source)]) - 1);#using index
+    #pathArray.append(int(nodeList[currentNode][nextJump]));
+    print("testin spot 3: " + str(nodeList[currentNode]));
+    print("testing spot 4: " + str(nextJump));
+    print("testing spot 2: " + str(nodeList));
+    print("testing spot 1: " + str(pathArray));
+    
+    while run == 1:
+        if str(destination) in nodeList[currentNode]:
+            print("before finish");
+            transmissionCount = transmissionCount + 1;
+            pathArray.append(int(destination));
+            print(pathArray);
+            return transmissionCount;
+        if currentNode == int(destination):
+            run == 2;
+            print("finish");
+            if len(pathArray) == 1:
+                pathArray.append(int(currentNode));
+            print(pathArray);
+            break;
+        if noAdd == 1:
+            noAdd = 0;
+        else:
+            pathArray.append(int(nodeList[currentNode][nextJump]));
+        previousNode = currentNode;
+        currentNode = int(nodeList[currentNode][nextJump]);
+        nextJump = random.randint(0, len(nodeList[int(currentNode)]) - 1);#using index
+        #print("this is next jump: " + str(nextJump));
+        while int(nodeList[currentNode][nextJump]) == previousNode:
+            #print("can't jump back");
+            #print("this is previous node: " + str(previousNode));
+            if len(nodeList[currentNode]) == 1:
+                break;
+            nextJump = random.randint(0, len(nodeList[int(currentNode)]) - 1);#using index
+            #print("this is new next jump: " + str(nextJump));
+        if int(nodeList[currentNode][nextJump]) in pathArray:
+            #print("check");
+            j = 0;
+            for i in pathArray:
+                if i == int(nodeList[currentNode][nextJump]):
+                    pathArray = pathArray[:j + 1];
+                j = j + 1;
+            noAdd = 1;
+        #print("testing: " + str(pathArray));
+        transmissionCount = transmissionCount + 1;
+        
+    return transmissionCount;    
+
 def main():
     
     inputFile = str(sys.argv[1]);#reads input file name
@@ -214,7 +271,9 @@ def main():
     avgPathLength, longestPath = avgDirectVectorRoute(nodes, numNodes);
     print(longestPath);
     print(directVectorTransmission(nodes, numNodes, longestPath));
-    count = HPRI(nodes, numNodes, 0, 1)
+    count = HPRI(nodes, numNodes, 0, 2)
+    print("this is count" + str(count));
+    count = HPRII(nodes, numNodes, 0, 2)
     print(count);
 if __name__ == "__main__":
     main()
