@@ -19,7 +19,6 @@ def findCI(array, mean):
         s = s + ((int(i) - int(mean))**2)
     s = s/4;
     s = math.sqrt(s);
-    print("testing testing testing: " + str(s));
     c1 = mean - (tscore * (s/math.sqrt(T)));
     c2 = mean + (tscore * (s/math.sqrt(T)));
     return c1, c2;
