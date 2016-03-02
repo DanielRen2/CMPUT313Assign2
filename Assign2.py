@@ -10,6 +10,20 @@ def findDegree(nodesList):#finds average degree of network
     degree = degree/(len(nodesList));
     return degree;
 
+def findCI(array, mean):
+    tscore = 2.776;
+    T = 5;
+    s = 0;
+    for i in array:
+        s = s + ((int(i) - int(mean))**2)
+    s = s/4;
+    s = math.sqrt(s);
+    print("testing testing testing: " + str(s));
+    c1 = mean - (tscore * (s/math.sqrt(T)));
+    c2 = mean + (tscore * (s/math.sqrt(T)));
+    return c1, c2;
+        
+
 def linkStateTransmissionCount(nodesList, numNodes):#finds average number of transmissions
     nodesHit = [];
     transmissionCount = 0;
@@ -20,7 +34,7 @@ def linkStateTransmissionCount(nodesList, numNodes):#finds average number of tra
             transmissionCount = transmissionCount + (len(nodesList[i]) - 1);
     return transmissionCount;
 
-def directVectorTransmission(nodesList, numNodes, longestPath):
+def directVectorTransmission(nodesList, numNodes, longestPath):#counts transmissions for Distance Vector
     transmissionCount = 0;
     
     for i in range(numNodes):
@@ -28,7 +42,7 @@ def directVectorTransmission(nodesList, numNodes, longestPath):
     
     return transmissionCount/numNodes;
 
-def linkStatePathFinder(nodesList, numNodes, sourceNode):
+def linkStatePathFinder(nodesList, numNodes, sourceNode):#finds all paths for linked state
     
     cost = [100] * (numNodes);
     finished = [];
@@ -65,7 +79,7 @@ def linkStatePathFinder(nodesList, numNodes, sourceNode):
     
     return cost;
 
-def directVectorPath(nodesList, numNodes, sourceNode):
+def directVectorPath(nodesList, numNodes, sourceNode):#finds all path for distance vector
     cost = [100] * (numNodes);
     finished = [];
     queue = [];
@@ -101,7 +115,7 @@ def directVectorPath(nodesList, numNodes, sourceNode):
         
     return cost;
 
-def avglinkStateRoute(nodesList, numNodes):
+def avglinkStateRoute(nodesList, numNodes):#finds averages for linked state
     avgLength = 0;
     totalAvgLength = 0;
     for i in range(numNodes):
@@ -114,7 +128,7 @@ def avglinkStateRoute(nodesList, numNodes):
     totalAvgLength = totalAvgLength/numNodes;
     return totalAvgLength;
 
-def avgDirectVectorRoute(nodeList, numNodes):
+def avgDirectVectorRoute(nodeList, numNodes):#finds averages for direct vector
     avgLength = 0;
     totalAvgLength = 0;
     longestPath = 0;
@@ -130,7 +144,7 @@ def avgDirectVectorRoute(nodeList, numNodes):
     totalAvgLength = totalAvgLength/numNodes;
     return totalAvgLength, longestPath;    
 
-def HPRI(nodeList, numNodes, source, destination):
+def HPRI(nodeList, numNodes, source, destination):#hot potato routing 1
     pathArray = [];
     transmissionCount = 0;
     run = 1;
@@ -167,7 +181,9 @@ def HPRI(nodeList, numNodes, source, destination):
         
     return transmissionCount, pathArray;
 
-def avgCalcHPRI(nodeList, numNodes):
+def avgCalcHPRI(nodeList, numNodes):#finds averages for hot potato
+    runTArray = [];
+    runLArray = [];
     transmission = 0;
     totalrunAvg = 0;
     avgTransmission = 0;
@@ -193,6 +209,8 @@ def avgCalcHPRI(nodeList, numNodes):
             avgPathlen = 0;
         totalTransmission = totalTransmission/numNodes;
         totalAvgPathlen = totalAvgPathlen/numNodes;
+        runTArray.append(totalTransmission);
+        runLArray.append(totalAvgPathlen);
         totalrunAvg = totalrunAvg + totalTransmission;
         totalrunPathlen = totalrunPathlen + totalAvgPathlen;
         totalTransmission = 0;
@@ -200,9 +218,11 @@ def avgCalcHPRI(nodeList, numNodes):
         run = run + 1;
     totalrunAvg = totalrunAvg/5;
     totalrunPathlen = totalrunPathlen/5;
-    return totalrunAvg, totalrunPathlen;
+    Tc1, Tc2 = findCI(runTArray, totalrunAvg);
+    Lc1, Lc2 = findCI(runLArray, totalrunPathlen);
+    return totalrunAvg, totalrunPathlen, Tc1, Tc2, Lc1, Lc2;
 
-def HPRII(nodeList, numNodes, source, destination):
+def HPRII(nodeList, numNodes, source, destination):#hot potato routing 2
     pathArray = [];
     transmissionCount = 0;
     run = 1;
@@ -244,7 +264,9 @@ def HPRII(nodeList, numNodes, source, destination):
         
     return transmissionCount, pathArray;  
 
-def avgCalcHPRII(nodeList, numNodes):
+def avgCalcHPRII(nodeList, numNodes):#finds averages for hot potato 2
+    runTArray = [];
+    runLArray = [];    
     transmission = 0;
     totalrunAvg = 0;
     avgTransmission = 0;
@@ -270,6 +292,8 @@ def avgCalcHPRII(nodeList, numNodes):
             avgPathlen = 0;
         totalTransmission = totalTransmission/numNodes;
         totalAvgPathlen = totalAvgPathlen/numNodes;
+        runTArray.append(totalTransmission);
+        runLArray.append(totalAvgPathlen);        
         totalrunAvg = totalrunAvg + totalTransmission;
         totalrunPathlen = totalrunPathlen + totalAvgPathlen;
         totalTransmission = 0;
@@ -277,7 +301,9 @@ def avgCalcHPRII(nodeList, numNodes):
         run = run + 1;
     totalrunAvg = totalrunAvg/5;
     totalrunPathlen = totalrunPathlen/5;
-    return totalrunAvg, totalrunPathlen;
+    Tc1, Tc2 = findCI(runTArray, totalrunAvg);
+    Lc1, Lc2 = findCI(runLArray, totalrunPathlen);    
+    return totalrunAvg, totalrunPathlen, Tc1, Tc2, Lc1, Lc2;
 
 def main():
     
@@ -303,19 +329,18 @@ def main():
     
     hitNodes = [];
     
-    print("this is degree: " + str(findDegree(nodes)));
-    print("average transmission for linked state is : " + str(linkStateTransmissionCount(nodes, numNodes)));
-    print("average length of path: " + str(avglinkStateRoute(nodes, numNodes)));
+    print(str(findDegree(nodes)));#degree of network
+    print("Link State Routing: " + str(linkStateTransmissionCount(nodes, numNodes)) + " " + str(avglinkStateRoute(nodes, numNodes)));
+    
     avgPathLength, longestPath = avgDirectVectorRoute(nodes, numNodes);
-    print("average path length for distance vector: " + str(avgPathLength));
-    print("longest path in distanceVector: " + str(longestPath));
-    print("average number of transmission for distance vector: " + str(directVectorTransmission(nodes, numNodes, longestPath)));
-    avgTransmission, avgPathlen = avgCalcHPRI(nodes, numNodes);
-    print("this is avg Transmission: " + str(avgTransmission));
-    print("this is avg Pathlen: " + str(avgPathlen));
-    avgTransmission, avgPathlen = avgCalcHPRII(nodes, numNodes);
-    print("this is avg Transmission: " + str(avgTransmission));
-    print("this is avg Pathlen: " + str(avgPathlen));    
+    print("Distance Vector Routing: " + str(directVectorTransmission(nodes, numNodes, longestPath)) + " " + str(avgPathLength));
+
+    avgTransmission, avgPathlen, Tc1, Tc2, Lc1, Lc2 = avgCalcHPRI(nodes, numNodes);
+    print("Hot Potato I: " + str(avgTransmission) + " (" + str(Tc1) + ", " + str(Tc2)+ "), " + str(avgPathlen) + " (" + str(Lc1) + ", " + str(Lc2) + ")");
+    
+    avgTransmission, avgPathlen, Tc1, Tc2, Lc1, Lc2 = avgCalcHPRII(nodes, numNodes);
+    print("Hot Potato II: " + str(avgTransmission) + " (" + str(Tc1) + ", " + str(Tc2)+ "), " + str(avgPathlen) + " (" + str(Lc1) + ", " + str(Lc2) + ")");
+  
 
 if __name__ == "__main__":
     main()
