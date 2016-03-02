@@ -1,6 +1,7 @@
 import sys
 import math
 import random
+import csv
 
 def findDegree(nodesList):#finds average degree of network
     degree = 0;
@@ -329,17 +330,27 @@ def main():
     
     hitNodes = [];
     
-    print(str(findDegree(nodes)));#degree of network
-    print("Link State Routing: " + str(linkStateTransmissionCount(nodes, numNodes)) + " " + str(avglinkStateRoute(nodes, numNodes)));
+    degree = str(findDegree(nodes));
+    print(degree);#degree of network
     
-    avgPathLength, longestPath = avgDirectVectorRoute(nodes, numNodes);
-    print("Distance Vector Routing: " + str(directVectorTransmission(nodes, numNodes, longestPath)) + " " + str(avgPathLength));
+    LSTransmission = str(linkStateTransmissionCount(nodes, numNodes));
+    LSPath = str(avglinkStateRoute(nodes, numNodes));
+    print("Link State Routing: " + LSTransmission + " " + LSPath);
+    
+    DVavgPathLength, longestPath = avgDirectVectorRoute(nodes, numNodes);
+    DVTransmission = str(directVectorTransmission(nodes, numNodes, longestPath))
+    print("Distance Vector Routing: " + DVTransmission + " " + str(DVavgPathLength));
 
     avgTransmission, avgPathlen, Tc1, Tc2, Lc1, Lc2 = avgCalcHPRI(nodes, numNodes);
     print("Hot Potato I: " + str(avgTransmission) + " (" + str(Tc1) + ", " + str(Tc2)+ "), " + str(avgPathlen) + " (" + str(Lc1) + ", " + str(Lc2) + ")");
     
-    avgTransmission, avgPathlen, Tc1, Tc2, Lc1, Lc2 = avgCalcHPRII(nodes, numNodes);
-    print("Hot Potato II: " + str(avgTransmission) + " (" + str(Tc1) + ", " + str(Tc2)+ "), " + str(avgPathlen) + " (" + str(Lc1) + ", " + str(Lc2) + ")");
+    avgTransmission2, avgPathlen2, T2c1, T2c2, L2c1, L2c2 = avgCalcHPRII(nodes, numNodes);
+    print("Hot Potato II: " + str(avgTransmission2) + " (" + str(T2c1) + ", " + str(T2c2)+ "), " + str(avgPathlen2) + " (" + str(L2c1) + ", " + str(L2c2) + ")");
+    
+    with open('output.csv', 'a') as csvfile:
+        a = csv.writer(csvfile, delimiter=',')
+        data = [str(numNodes), str(degree), str(LSTransmission), str(LSPath), str(DVTransmission), str(DVavgPathLength), str(avgTransmission), str(Tc1), str(Tc2), str(avgPathlen), str(Lc1), str(Lc2), str(avgTransmission2), str(T2c1), str(T2c2), str(avgPathlen2), str(L2c1), str(L2c2)];
+        a.writerows([data])        
   
 
 if __name__ == "__main__":
