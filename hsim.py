@@ -59,7 +59,7 @@ def linkStatePathFinder(nodesList, numNodes, sourceNode):#finds all paths for li
     run = 1;
     distance = 2;
     
-    while run == 1:
+    while run == 1:#floods network
         if len(queue) == 0:
             run = 0;
         for i in queue:
@@ -133,7 +133,7 @@ def avgDirectVectorRoute(nodeList, numNodes):#finds averages for direct vector
     avgLength = 0;
     totalAvgLength = 0;
     longestPath = 0;
-    for i in range(numNodes):
+    for i in range(numNodes):#identifies longest path and average path length
         cost = directVectorPath(nodeList, numNodes, int(i))
         for j in cost:
             if int(j) > longestPath:
@@ -154,7 +154,7 @@ def HPRI(nodeList, numNodes, source, destination):#hot potato routing 1
     noAdd = 0;
     currentNode = int(source);
     nextJump = random.randint(0, len(nodeList[int(source)]) - 1);#using index 
-    while run == 1:
+    while run == 1:#random jumps to different nodes until it hits its destination
         if currentNode == int(destination):
             run == 2;
             if len(pathArray) == 1:
@@ -347,7 +347,7 @@ def main():
     avgTransmission2, avgPathlen2, T2c1, T2c2, L2c1, L2c2 = avgCalcHPRII(nodes, numNodes);
     print("Hot Potato II: " + str(avgTransmission2) + " (" + str(T2c1) + ", " + str(T2c2)+ "), " + str(avgPathlen2) + " (" + str(L2c1) + ", " + str(L2c2) + ")");
     
-    with open('output.csv', 'a') as csvfile:
+    with open('output.csv', 'a') as csvfile:#creates csv output
         a = csv.writer(csvfile, delimiter=',')
         data = [str(numNodes), str(degree), str(LSTransmission), str(LSPath), str(DVTransmission), str(DVavgPathLength), str(avgTransmission), str(Tc1), str(Tc2), str(avgPathlen), str(Lc1), str(Lc2), str(avgTransmission2), str(T2c1), str(T2c2), str(avgPathlen2), str(L2c1), str(L2c2)];
         a.writerows([data])        
